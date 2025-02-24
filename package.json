@@ -1,0 +1,23 @@
+{
+  "name": "luthieria",
+  "version": "1.0.0",
+  "description": "Sistema de orgem de servico com o tema de uma luthieria",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LuisGustavoRSilva/projeto_luthieria.git"
+  },
+  "author": "Luis Gustavo Rodrigues Da Silva",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LuisGustavoRSilva/projeto_luthieria/issues"
+  },
+  "homepage": "https://github.com/LuisGustavoRSilva/projeto_luthieria#readme",
+  "devDependencies": {
+    "electron": "^34.2.0"
+  }
+}
