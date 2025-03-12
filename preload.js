@@ -10,5 +10,6 @@ const { contextBridge, ipcRenderer } = require("electron")
 // autorizar 
 contextBridge.exposeInMainWorld('api', {
     clientWindow: () => ipcRenderer.send('client-window'),
-    osWindow: () => ipcRenderer.send('os-window')
+    osWindow: () => ipcRenderer.send('os-window'),
+    termosWindow: () => ipcRenderer.send('termos-window')
 })

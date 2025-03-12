@@ -18,3 +18,7 @@ function os() {
     // uso da api (autorizado no preçoad.js)
     api.osWindow()
 }
+
+function termos() {
+    api.termosWindow()
+}

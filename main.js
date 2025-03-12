@@ -36,6 +36,9 @@ const createWindow = () => {
     ipcMain.on('os-window', () => (
       osWindow()
     ))
+    ipcMain.on('termos-window', () => (
+        termosWindow()
+      ))
 }
 
 // Janela sobre
@@ -97,6 +100,24 @@ function osWindow() {
     }
     os.loadFile('./src/views/os.html')   
     os.center()
+}
+
+let termos
+function termosWindow() {
+    nativeTheme.themeSource = 'light'
+    const main = BrowserWindow.getFocusedWindow()
+    if(main) {
+        termos = new BrowserWindow({
+            width: 1010,
+            height: 920,
+            autoHideMenuBar: true,
+            resizable: false,
+            parent: main,
+            modal: true
+        })
+    }
+    termos.loadFile('./src/views/termos.html')   
+    termos.center()
 }
 
 // Iniciar a aplicação
