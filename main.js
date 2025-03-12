@@ -109,7 +109,7 @@ function termosWindow() {
     if(main) {
         termos = new BrowserWindow({
             width: 1010,
-            height: 920,
+            height: 768,
             autoHideMenuBar: true,
             resizable: false,
             parent: main,
