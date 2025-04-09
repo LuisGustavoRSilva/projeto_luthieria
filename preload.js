@@ -13,7 +13,9 @@ ipcRenderer.send('db-connect')
 contextBridge.exposeInMainWorld('api', {
     clientWindow: () => ipcRenderer.send('client-window'),
     osWindow: () => ipcRenderer.send('os-window'),
+    termsWindow: () => ipcRenderer.send('terms-window'),
     dbStatus: (message) => ipcRenderer.on('db-status', message),
+    newOs: (os) => ipcRenderer.send('new-os', os),
     newClient: (client) => ipcRenderer.send('new-client', client),
     resetForm: (args) => ipcRenderer.on('reset-form', args)
 })

@@ -19,6 +19,12 @@ function os() {
     api.osWindow()
 }
 
+// janela termos
+function terms() {
+    
+    api.termsWindow()
+}
+
 // Troca do ícone do banco de dados (usando a api do preload.js)
 api.dbStatus((event, message) => {
     //teste do recebimento da mensagem do main

@@ -11,6 +11,9 @@ const { conectar, desconectar } = require('./database.js')
 // Importação do Schema Clientes da camada model
 const clientModel = require('./src/models/Clientes.js')
 
+// Importação do Schema Os da camada model
+const osModel = require('./src/models/Os.js')
+
 // Importação do pacote jspdf (npm i jspdf)
 const { jspdf, default: jsPDF } = require('jspdf')
 
@@ -95,14 +98,34 @@ function osWindow() {
         os = new BrowserWindow({
             width: 1010,
             height: 720,
+            parent: main,
+            modal: true,
+            webPreferences: {
+                preload: path.join(__dirname, 'preload.js')
+            }
+        })
+    }
+    os.loadFile('./src/views/os.html')
+    os.center()
+}
+
+// Janela termos
+let terms
+function termsWindow() {
+    nativeTheme.themeSource = 'light'
+    const main = BrowserWindow.getFocusedWindow()
+    if (main) {
+        terms = new BrowserWindow({
+            width: 1010,
+            height: 720,
             // autoHideMenuBar: true,
             resizable: false,
             parent: main,
             modal: true
         })
     }
-    os.loadFile('./src/views/os.html')
-    os.center()
+    terms.loadFile('./src/views/termos.html')
+    terms.center()
 }
 
 // Iniciar a aplicação
@@ -228,6 +251,9 @@ ipcMain.on('os-window', () => {
     osWindow()
 })
 
+ipcMain.on('terms-window', () => {
+    termsWindow()
+})
 // ============================================================
 // == Clientes - CRUD Create
 // recebimento do objeto que contem os dados do cliente
@@ -287,7 +313,57 @@ ipcMain.on('new-client', async (event, client) => {
 // == Fim - Clientes - CRUD Create
 // ============================================================
 
-
+// == Ordem de Serviço - CRUD Create
+// recebimento do objeto que contem os dados do cliente
+ipcMain.on('new-os', async (event, os) => {
+    // Importante! Teste de recebimento dos dados do cliente
+    console.log(os)
+    // Cadastrar a estrutura de dados no banco de dados MongoDB
+    try {
+        // criar uma nova de estrutura de dados usando a classe modelo. Atenção! Os atributos precisam ser idênticos ao modelo de dados Clientes.js e os valores são definidos pelo conteúdo do objeto cliente
+        const newOs = new osModel({
+            statusOS: os.statusOs,
+            instModel: os.instOs,
+            numSerie: os.numserieOs,
+            problemaRelatado: os.problemOs,
+            luthier: os.luthierOs,
+            luthierDiag: os.luthierdiagOs,
+            pecas: os.pecasOs,
+            valor: os.valorOs
+        })
+        // salvar os dados do cliente no banco de dados
+        await newOs.save()
+        // Mensagem de confirmação
+        dialog.showMessageBox({
+            //customização
+            type: 'info',
+            title: "Aviso",
+            message: "Ordem de Serviço adicionada com sucesso",
+            buttons: ['OK']
+        }).then((result) => {
+            //ação ao pressionar o botão (result = 0)
+            if (result.response === 0) {
+                //enviar um pedido para o renderizador limpar os campos e resetar as configurações pré definidas (rótulo 'reset-form' do preload.js
+                event.reply('reset-form')
+            }
+        })
+    } catch (error) {
+        // se o código de erro for 11000 (cpf duplicado) enviar uma mensagem ao usuário
+        if (error.code === 11000) {
+            dialog.showMessageBox({
+                type: 'error',
+                title: "Atenção!",
+                message: "OS já está cadastrada\nVerifique as informações e tente novamente",
+                buttons: ['OK']
+            }).then((result) => {
+                if (result.response === 0) {
+                    // limpar a caixa de input do cpf, focar esta caixa e deixar a borda em vermelho
+                }
+            })
+        }
+        console.log(error)
+    }
+})
 // ============================================================
 // == Relatório de clientes ===================================
 
@@ -303,7 +379,7 @@ async function relatorioClientes() {
         // inserir imagem
         const imagePath = path.join(__dirname, 'src', 'public', 'img', 'logo.png')
         const imageBase64 = fs.readFileSync(imagePath, { encoding: 'base64' })
-        doc.addImage(imageBase64, 'PNG', 5, 8) // (x, y)
+        doc.addImage(imageBase64, 'PNG', 0, 8) // (x, y)
         // definir o tamanho da fonte (tamanho equivalente ao word)
         doc.setFontSize(18)
         // escrever um texto (título)        

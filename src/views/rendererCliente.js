@@ -57,6 +57,53 @@ let neighborhoodClient = document.getElementById('inputNeighborhoodClient')
 let cityClient = document.getElementById('inputCityClient')
 let ufClient = document.getElementById('inputUFClient')
 
+// Aplica máscara no campo de CPF
+inputCPFClient.addEventListener('input', () => {
+    let value = inputCPFClient.value.replace(/\D/g, ''); // Remove tudo que não é número
+    if (value.length > 11) value = value.slice(0, 11); // Limita a 11 dígitos
+
+    // Formata como 000.000.000-00
+    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+    value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+
+    inputCPFClient.value = value;
+});
+
+// Validação de CPF ao sair do campo
+inputCPFClient.addEventListener('blur', () => {
+    const cpf = inputCPFClient.value.replace(/\D/g, ''); // Apenas números
+    if (!isValidCPF(cpf)) {
+        inputCPFClient.style.border = '2px solid red';
+        inputCPFClient.focus();
+    } else {
+        inputCPFClient.style.border = ''; // Remove borda vermelha se válido
+    }
+});
+
+// Função que valida o CPF
+function isValidCPF(cpf) {
+    if (!cpf || cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+
+    let sum = 0;
+    for (let i = 0; i < 9; i++) sum += parseInt(cpf.charAt(i)) * (10 - i);
+    let firstCheck = (sum * 10) % 11;
+    if (firstCheck === 10 || firstCheck === 11) firstCheck = 0;
+    if (firstCheck !== parseInt(cpf.charAt(9))) return false;
+
+    sum = 0;
+    for (let i = 0; i < 10; i++) sum += parseInt(cpf.charAt(i)) * (11 - i);
+    let secondCheck = (sum * 10) % 11;
+    if (secondCheck === 10 || secondCheck === 11) secondCheck = 0;
+    if (secondCheck !== parseInt(cpf.charAt(10))) return false;
+
+    return true;
+}
+
+
+
+
+
 // ============================================================
 // == CRUD Create/Update ======================================
 
